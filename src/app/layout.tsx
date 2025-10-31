@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 //@ts-ignore
 import "./globals.css";
 
+
 const workSans = localFont({
   src: [
     { path: './fonts/WorkSans-Black.ttf', weight: '900', style: 'normal' },
