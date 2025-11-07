@@ -2,22 +2,15 @@ import Image from "next/image";
 import Navbar from "../../../components/Navbar";
 import SearchForm from "../../../components/SearchForm";
 import StartupCard from "@/components/StartupCard";
+import { STARTUPS_QUERY } from "@/src/sanity/lib/quaries";
+import { client } from './../../sanity/lib/client';
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ query?: string }> }) {
   const query = (await searchParams).query
 
-  const posts = [
-    {
-      _id : 1,
-      _createdAt: "Yesterday",
-      views: 55,
-      author: { _id: 1 , name : "Chen Myae" },
-      description: "This is a description",
-      image: "https://images.unsplash.com/photo-1617972882594-b1b094574749?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1171",
-      category: "Nature",
-      title: "Health and Wellness",
-    }
-  ]
+  const posts = await client.fetch(STARTUPS_QUERY);
+  console.log(JSON.stringify(posts, null, 2));
+
   return (
     <>
       <section className="pink_container  ">

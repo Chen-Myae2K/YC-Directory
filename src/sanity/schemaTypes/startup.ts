@@ -1,11 +1,14 @@
-import { Rule, validation } from "sanity";
-const { defineType, defineField } = require("sanity");
+import { defineField, defineType } from "sanity";
 
 export const startup = defineType({
   name: "startup",
   title: "Startup",
   type: "document",
   fields: [
+    defineField({
+      name: "title",
+      type: "string",
+    }),
     defineField({
       name: "slug",
       type: "slug",
@@ -29,13 +32,13 @@ export const startup = defineType({
     defineField({
       name: "category",
       type: "string",
-      validation: (rule: Rule) =>
-        rule.min(1).max(20).required().error("Please enter a category"),
+      validation: (Rule) =>
+        Rule.min(1).max(20).required().error("Please enter a category"),
     }),
     defineField({
       name: "image",
       type: "url",
-      validation: (rule: Rule) => rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "pitch",
