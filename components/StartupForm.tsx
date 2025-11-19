@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Textarea } from "./ui/textarea";
 import { Input } from "./ui/input";
-import  MDEditor  from '@uiw/react-md-editor';
+import MDEditor from '@uiw/react-md-editor';
 import { createPitch } from '@/lib/actions';
 import { formSchema } from '@/lib/validation';
 import { toast } from "sonner";
