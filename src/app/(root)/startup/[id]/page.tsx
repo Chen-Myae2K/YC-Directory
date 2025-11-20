@@ -1,6 +1,6 @@
 import { formatDate } from '@/lib/utils';
 import { client } from '@/src/sanity/lib/client';
-import { STARTUP_BY_ID_QUERY } from '@/src/sanity/lib/quaries';
+import { PLAYLIST_BY_SLUG_QUERY, STARTUP_BY_ID_QUERY } from '@/src/sanity/lib/quaries';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -8,22 +8,23 @@ import markdownit from 'markdown-it';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import View from '@/components/view';
-
+import StartupCard, { StartupTypeCard } from '@/components/StartupCard';
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const id = (await params).id
+  const id = (await params).id;
 
-  const post = await client.fetch(STARTUP_BY_ID_QUERY, { id });
+  // Fetch both the post and the playlist data
+  const [post, playlist] = await Promise.all([
+    client.fetch(STARTUP_BY_ID_QUERY, { id }),
+    client.fetch(PLAYLIST_BY_SLUG_QUERY, {
+      slug: "editor-picks",
+    }),
+  ]);
+  
+  const editorPosts = playlist?.select || [];
+  console.log(editorPosts);
 
   if (!post) return notFound();
-  console.log(post);
-
-  // const [post, { select: editorPosts }] = await Promise.all([
-  //   client.fetch(STARTUP_BY_ID_QUERY, { id }),
-  //   client.fetch(PLAYLIST_BY_SLUG_QUERY, {
-  //     slug: "editor-picks-new",
-  //   }),
-  // ]);
 
   const parsedContent = markdownit().render(post?.pitch || "");
 
@@ -54,7 +55,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 alt="avatar"
                 width={64}
                 height={64}
-                className="rounded-full drop-shadow-lg aspect-square object-cover"
+                className="rounded-full drop-shadow-lg"
               />
 
               <div>
@@ -81,7 +82,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
         <hr className="divider" />
 
-        {/* {editorPosts?.length > 0 && (
+        {editorPosts?.length > 0 && (
           <div className="max-w-4xl mx-auto">
             <p className="text-30-semibold">Editor Picks</p>
 
@@ -91,14 +92,14 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
               ))}
             </ul>
           </div>
-        )} */}
+        )}
 
         <Suspense fallback={<Skeleton className="view_skeleton" />}>
           <View id={id} />
         </Suspense>
       </section>
     </>
-  )
+  );
 }
 
-export default page
+export default page;
